@@ -23,8 +23,18 @@ const loadOptions = async (apiUrl: string, apiKey: string) => {
   });
   const roomJson = await roomResponse.json();
   // 使用 parseApiResponse 解析数据并简化选项
-  const styleOptions = parseApiResponse<IOptions[]>(roomJson);
-  options$.next(styleOptions);
+  const styleOptions = parseApiResponse<[{child: IOptions[]}]>(roomJson);
+  const arr:IOptions[] = [];
+  styleOptions.forEach(obj => {
+    if(obj.child && obj.child.length > 0){
+      obj.child.forEach(item => {
+        arr.push(item);
+      })
+    }
+  })
+  if(arr.length > 0){
+    options$.next(arr);
+  }
 };
 
 interface RoomTypeSelectProps extends SelectProps{
